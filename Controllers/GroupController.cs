@@ -15,20 +15,34 @@ namespace SchoolRegisterSystem.Controllers
     public class GroupController : Controller
     {
         private IGroupService groupService;
-        private UserManager<User> userManager;
+        private readonly UserManager<User> userManager;
+        private readonly ITeacherService teacherService;
 
 
-        public GroupController(IGroupService _groupservice, UserManager<User> _userManager)
+        public GroupController(IGroupService _groupservice, UserManager<User> _userManager, ITeacherService _teacherService)
         {
             groupService = _groupservice;
             userManager = _userManager;
+            teacherService = _teacherService;
         }
 
 
         public IActionResult Index()
         {
+            
+            var user = userManager.GetUserAsync(User).Result;
 
-            return View();
+
+            if (!userManager.IsInRoleAsync(user, "Teacher").Result)
+                throw new Exception("You don't have permission");
+
+            var teacherGroups = new GetTeacherGroupsDto()
+            {
+                Id = user.Id
+            };
+
+
+            return View (teacherService.GetTeacherGroups(teacherGroups));
         }
         [HttpGet]
         public IActionResult AddOrUpdateGroup(int? Id)
@@ -55,6 +69,13 @@ namespace SchoolRegisterSystem.Controllers
             }
             return View();
         }
+
+        public IActionResult Details(int id)
+        {
+            var group = groupService.GetGroup(x=>x.Id==id);
+            return View(group);
+        }
+
 
     }
 }
