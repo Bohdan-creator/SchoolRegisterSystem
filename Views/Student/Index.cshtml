@@ -69,6 +69,8 @@
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { studentId = item.Id }) |
+                @Html.ActionLink("Attach Student to Group", "AttachStudentToGroup", new { studentId = item.Id }) |
+                @Html.ActionLink("Detach Student to Group", "DetachStudentToGroup", new { studentId = item.Id }) |
                 @Html.ActionLink("Send Email to Parent", "SendEmailToParent", "Teacher", new { studentId = item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

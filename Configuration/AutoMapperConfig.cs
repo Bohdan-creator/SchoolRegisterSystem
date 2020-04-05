@@ -15,7 +15,7 @@ namespace SchoolRegisterSystem.Configuration
         {
             Mapper.Initialize(mapper =>
             {
-
+                mapper.CreateMap<Student, AttachDetachStudentToGroup>();
                 mapper.CreateMap<AddOrUpdateGroupDto, Group>();
                 mapper.CreateMap<Group, GroupVm>();
                 mapper.CreateMap<Student, StudentVm>()

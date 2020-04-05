@@ -65,7 +65,7 @@ namespace SchoolRegisterSystem.Controllers
             if (ModelState.IsValid)
             {
                 groupService.AddOrUpdate(addOrUpdateGroupDto);
-               // return RedirectToAction("Index");
+               return RedirectToAction("Index");
             }
             return View();
         }
