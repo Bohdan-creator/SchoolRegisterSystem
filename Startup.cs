@@ -3,11 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SchoolRegister.BLL.Entities;
 using SchoolRegister.DAL.EF;
@@ -23,7 +20,9 @@ using SchoolRegisterSystem.Services.Interfaces;
 using SchoolRegisterSystem.Services.Services;
 using SchoolRegister.Services.Interfaces;
 using SchoolRegisterSystem.Configuration;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SchoolRegister.Web
 {
@@ -62,25 +61,41 @@ namespace SchoolRegister.Web
             #region Framework Services
             // Add framework services.
             services.AddOptions();
+
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                            .AddNewtonsoftJson(options =>
+                            
+                                options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat)
+ .AddViewLocalization(
+            LanguageViewLocationExpanderFormat.Suffix,
+            opts => { opts.ResourcesPath = "Resources"; })
+        .AddDataAnnotationsLocalization()
+ .AddMvcOptions(x => x.EnableEndpointRouting = false);
+
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+
             services.AddApplicationInsightsTelemetry(Configuration);
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-            //services.Configure<RequestLocalizationOptions>(options =>
+            //services.Configure<CookiePolicyOptions>(options =>
             //{
-            //    var supportedCultures = new[]
-            //    {
-            //        new CultureInfo("en"),
-            //        new CultureInfo("pl-PL") 
-            //        // add other cultures
-            //    };
-            //    options.DefaultRequestCulture = new RequestCulture(culture: "en", uiCulture: "en");
-            //    options.SupportedCultures = supportedCultures;
-            //    options.SupportedUICultures = supportedCultures;
+            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
             //});
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+               new CultureInfo("en-EN"),
+               new CultureInfo("ru-RU")
+// add other cultures
+ };
+                options.DefaultRequestCulture = new RequestCulture(culture: "ru", uiCulture:
+               "RU");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
@@ -92,13 +107,7 @@ namespace SchoolRegister.Web
 
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-               .AddCookie(options =>
-               {
-                   options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-               });
-
+            
             services.AddIdentity<User, Role>()
                 .AddRoles<Role>()
                 .AddRoleManager<RoleManager<Role>>()
@@ -115,9 +124,16 @@ namespace SchoolRegister.Web
                 x.KeyLengthLimit = int.MaxValue;
             });
 
-            services.AddScoped((serviceProvider) =>
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            //    options.CheckConsentNeeded = context => true;
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //});
+
+            services.AddScoped((servicesProvider) =>
             {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
+                var config = servicesProvider.GetRequiredService<IConfiguration>();
                 return new SmtpClient()
                 {
                     Host = config.GetValue<String>("Email:Smtp:Host"),
@@ -134,8 +150,8 @@ namespace SchoolRegister.Web
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddRazorPages();
 
-           
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSignalR();
             #endregion
@@ -158,7 +174,8 @@ namespace SchoolRegister.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            var localizationOption = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            var localizationOption =
+ app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(localizationOption.Value);
             if (env.IsDevelopment())
             {
@@ -168,19 +185,16 @@ namespace SchoolRegister.Web
             else
             {
                 app.UseExceptionHandler("/Error");
-            }
-            app.UseRouting();
-            app.UseAuthorization();
+            }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseEndpoints(endpoints =>
+            app.UseMvc(routes =>
             {
-                endpoints.MapControllerRoute(
+                routes.MapRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
         }

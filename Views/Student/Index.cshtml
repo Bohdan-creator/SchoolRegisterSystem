@@ -5,6 +5,11 @@
 }
 
 <h1>Index</h1>
+<div class="row">
+    <div class="col-lg-4">
+        <input id="students-filter-input" class="form-control" type="text" placeholder="filter" />
+    </div>
+</div>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,9 +17,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+          
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
             </th>
@@ -23,9 +26,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ParentName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.GroupName)
@@ -39,42 +39,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GroupName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AverageGrade)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { studentId = item.Id }) |
-                @Html.ActionLink("Attach Student to Group", "AttachStudentToGroup", new { studentId = item.Id }) |
-                @Html.ActionLink("Detach Student to Group", "DetachStudentToGroup", new { studentId = item.Id }) |
-                @Html.ActionLink("Send Email to Parent", "SendEmailToParent", "Teacher", new { studentId = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+    <tbody class="students-table-data">
+        <partial name="_StudentsTableDataPartial" , model="Model" />
     </tbody>
 </table>

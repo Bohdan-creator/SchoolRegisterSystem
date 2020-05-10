@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ using SchoolRegister.BLL.Entities;
 
 namespace SchoolRegisterSystem.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    //[Authorize(Roles="Admin")]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
@@ -92,6 +93,7 @@ namespace SchoolRegisterSystem.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
+                    //var addClaim = await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Teacher"));
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email });

@@ -61,6 +61,12 @@
         </dd>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Student,Parent"))
+    {
+
+        <a asp-controller="Home" asp-action="Index">Back to List</a>
+    }
+  
+    <a asp-controller="Student" asp-action="Index">Back to List</a>
+    
 </div>

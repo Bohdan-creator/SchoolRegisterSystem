@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SchoolRegisterSystem</title>
+    <title>@ViewData["Title"] - @Localizer["SchoolRegisterSystem"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -20,10 +22,21 @@
 
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        <li>
-                            <a asp-area="" asp-controller="Subject" asp-action="Index">Subjects</a>
-                            <a asp-area="" asp-controller="Teacher" asp-action="AddGrade">AddGrade</a>
-                        </li>
+                        @if (User.IsInRole("Teacher") || User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a class="btn" asp-area="" asp-controller="Subject" asp-action="Index">Subjects</a>
+                                <a class="btn" asp-area="" asp-controller="Group" asp-action="Index">Groups</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Teacher") || User.IsInRole("Admin") || User.IsInRole("Parent"))
+                        {
+                            <li><a class="btn" asp-area="" asp-controller="Student" asp-action="Index">Students</a></li>
+                        }
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li><a class="btn" asp-area="" asp-controller="Student" asp-action="Details">Details Student</a></li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -46,9 +59,28 @@
             &copy; 2020 - SchoolRegisterSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -1,20 +1,26 @@
 ﻿@model IEnumerable<SchoolRegisterSystem.ViewModel.VMs.SubjectVm>
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
+<div class="row">
+    <div class="col-lg-4">
+        <input id="subjects-filter-input" class="form-control" type="text" placeholder="filter" />
+    </div>
+</div>
+
+
 <p>
-    <a asp-action="AddOrEditSubject">Create New</a>
+    <a asp-action="AddOrEditSubject">@Localizer["CreateNew"]</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -25,35 +31,12 @@
                 @Html.DisplayNameFor(model => model.TeacherName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TeacherId)
+                <label>Groups Count</label>
             </th>
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeacherName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeacherId)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "AddOrEditSubject", new {  id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new {  id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.Id })
-            </td>
-        </tr>
-}
+    <tbody class="subjects-table-data">
+        <partial name="_SubjectsTableDataPartial"model="Model" />
     </tbody>
 </table>
