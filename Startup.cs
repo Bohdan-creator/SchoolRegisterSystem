@@ -23,6 +23,7 @@ using SchoolRegisterSystem.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Razor;
+using SchoolRegisterSystem.Hubs;
 
 namespace SchoolRegister.Web
 {
@@ -56,6 +57,7 @@ namespace SchoolRegister.Web
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [Obsolete]
         public void ConfigureServices(IServiceCollection services)
         {
             #region Framework Services
@@ -63,7 +65,7 @@ namespace SchoolRegister.Web
             services.AddOptions();
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                             .AddNewtonsoftJson(options =>
                             
                                 options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.MicrosoftDateFormat)
@@ -172,6 +174,7 @@ namespace SchoolRegister.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        [Obsolete]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var localizationOption =
@@ -195,6 +198,10 @@ namespace SchoolRegister.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<Chathub>("/chathub");
             });
 
         }

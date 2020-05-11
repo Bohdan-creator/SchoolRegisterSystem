@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolRegister.BLL.Entities;
 using SchoolRegisterSystem.ViewModel.DTos;
 using SchoolRegisterSystem.ViewModel.VMs;
@@ -15,6 +16,13 @@ namespace SchoolRegisterSystem.Configuration
         {
             Mapper.Initialize(mapper =>
             {
+                mapper.CreateMap<GroupVm, SelectListItem>()
+                .ForMember(x => x.Text, y => y.MapFrom(z => z.Name))
+                .ForMember(x => x.Value, y => y.MapFrom(z => z.Id));
+
+                mapper.CreateMap<StudentVm, SelectListItem>()
+                .ForMember(x => x.Text, y => y.MapFrom(z => z.UserName))
+                .ForMember(x => x.Value, y => y.MapFrom(z => z.Id));
                 mapper.CreateMap<Student, AttachDetachStudentToGroup>();
                 mapper.CreateMap<AddOrUpdateGroupDto, Group>();
                 mapper.CreateMap<Group, GroupVm>();
